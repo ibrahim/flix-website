@@ -1,58 +1,39 @@
-import React, { Component } from 'react';
+import React from 'react';
 import Slider from './components/NetflixSlider'
+import useSWR from 'swr'
+
 import './App.scss'
 
-const movies = [
-  {
-    id: 1,
-    image: '/images/slide1.jpg',
-    imageBg: '/images/slide1b.webp',
-    title: '1983'
-  },
-  {
-    id: 2,
-    image: '/images/slide2.jpg',
-    imageBg: '/images/slide2b.webp',
-    title: 'Russian doll'
-  },
-  {
-    id: 3,
-    image: '/images/slide3.jpg',
-    imageBg: '/images/slide3b.webp',
-    title: 'The rain',
-  },
-  {
-    id: 4,
-    image: '/images/slide4.jpg',
-    imageBg: '/images/slide4b.webp',
-    title: 'Sex education'
-  },
-  {
-    id: 5,
-    image: '/images/slide5.jpg',
-    imageBg: '/images/slide5b.webp',
-    title: 'Elite'
-  },
-  {
-    id: 6,
-    image: '/images/slide6.jpg',
-    imageBg: '/images/slide6b.webp',
-    title: 'Black mirror'
-  }
-];
-
+const fetcher = (...args) => fetch(...args).then(res => res.json())
 const App = () => {
+	const API_KEY = process.env.REACT_APP_API_KEY
+	const url = `https://api.themoviedb.org/3/movie/popular?api_key=${ API_KEY }&language=en-US&page=1`
+	
+  const { data, error } = useSWR(url, fetcher)
+	const [movies, setMovies] = React.useState(null)
 	React.useEffect(() => {
-
-
-	})
+		if(data && Array.isArray(data.results) && data.results.length > 0){
+			const movies = data.results.map((movie) => ({
+				id: movie.id,
+				image: "https://image.tmdb.org/t/p/w220_and_h330_face" + movie.poster_path,
+				imageBg: "https://image.tmdb.org/t/p/w300_and_h450_bestv2" + movie.backdrop_path,
+				title: movie.original_title
+			}))
+			console.log({movies})
+			setMovies(movies)
+		}
+	},[data])
+	const has_movies = Array.isArray(movies)
 	return (
 		<div className="app">
+     {error ? <p style={{ color: "red" }}>{error.message}</p> : null}
+		{ has_movies && (
 		<Slider>
-		{movies.map(movie => (
+		{Array.isArray(movies) && movies.map(movie => (
 			<Slider.Item movie={movie} key={movie.id}>item1</Slider.Item>
 		))}
-		</Slider>
+			</Slider>
+		)}
 		</div>
 	);
 }

@@ -8,7 +8,7 @@ const Content = ({ movie, onClose }) => (
       <div className="content__background__shadow" />
       <div
         className="content__background__image"
-        style={{ 'backgroundImage': `url(${movie.imageBg})` }}
+	style={{ backgroundImage: `url(${movie.imageBg})`, backgroundSize: 'cover' }}
       />
     </div>
     <div className="content__area">
