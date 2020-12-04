@@ -23,6 +23,9 @@ const App = () => {
 			setMovies(movies)
 		}
 	},[data])
+	if(!API_KEY){
+		alert("API KEY is not configured use environment file.")
+	}
 	const has_movies = Array.isArray(movies)
 	return (
 		<div className="app">
